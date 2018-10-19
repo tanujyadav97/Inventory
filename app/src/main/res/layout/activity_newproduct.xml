@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="16dp">
+
+    <EditText
+        android:id="@+id/nameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/nameTextView"
+        android:autofillHints="Name" />
 
     <EditText
         android:id="@+id/colorEditText"
-        android:layout_width="201dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="8dp"
-        android:autofillHints=""
-        app:layout_constraintEnd_toEndOf="@+id/typeEditText"
-        app:layout_constraintStart_toStartOf="@+id/typeEditText"
-        app:layout_constraintTop_toTopOf="@+id/colorTextView" />
-
-    <EditText
-        android:id="@+id/typeEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="@+id/nameEditText"
-        app:layout_constraintStart_toStartOf="@+id/nameEditText"
-        app:layout_constraintTop_toTopOf="@+id/typeTextView" />
+        android:layout_below="@+id/typeEditText"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/colorTextView" />
 
     <TextView
         android:id="@+id/nameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="33dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="68dp"
-        android:text="Name"
-        app:layout_constraintEnd_toStartOf="@+id/nameEditText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Name" />
 
     <EditText
-        android:id="@+id/nameEditText"
-        android:layout_width="0dp"
+        android:id="@+id/typeEditText"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="46dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/nameTextView"
-        app:layout_constraintTop_toTopOf="@+id/nameTextView" />
+        android:layout_below="@+id/nameEditText"
+        android:layout_marginStart="20dp"
+        android:layout_toEndOf="@+id/typeTextView" />
 
     <TextView
         android:id="@+id/typeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:text="type"
-        app:layout_constraintEnd_toEndOf="@+id/nameTextView"
-        app:layout_constraintStart_toStartOf="@+id/nameTextView"
-        app:layout_constraintTop_toBottomOf="@+id/nameTextView" />
+        android:layout_below="@+id/nameTextView"
+        android:layout_alignEnd="@+id/nameTextView"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Type" />
 
     <TextView
         android:id="@+id/colorTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:text="color"
-        app:layout_constraintEnd_toEndOf="@+id/typeTextView"
-        app:layout_constraintHorizontal_bias="0.2"
-        app:layout_constraintStart_toStartOf="@+id/typeTextView"
-        app:layout_constraintTop_toBottomOf="@+id/typeTextView" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_below="@+id/typeTextView"
+        android:layout_alignEnd="@+id/typeTextView"
+        android:padding="16dp"
+        android:text="color" />
+
+    <Button
+        android:id="@+id/submit_button"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@+id/colorEditText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="Submit" />
+</RelativeLayout>
