@@ -1,7 +1,6 @@
-package com.android.hackslash.inventory.AddNewProduct;
+package com.android.hackslash.inventory;
 
 import android.os.Bundle;
-import android.renderscript.Short4;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,11 +8,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import com.android.hackslash.inventory.AddNewProduct.remote.APIService;
-import com.android.hackslash.inventory.AddNewProduct.remote.ApiUtils;
-import com.android.hackslash.inventory.Data.getTransactions.model.Post;
-import com.android.hackslash.inventory.R;
-import java.util.List;
+
+import com.android.hackslash.inventory.Data.AddNewProduct.remote.APIService;
+import com.android.hackslash.inventory.Data.AddNewProduct.remote.ApiUtils;
+import com.android.hackslash.inventory.Data.AddNewProduct.model.Post;
+
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -24,11 +23,13 @@ public class addNewProduct extends AppCompatActivity {
     private String sname, stype, scolor;
     private APIService mAPIService;
     private String query;
+    private String TAG;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newproduct);
+        TAG = "addNewProduct";
         init();
         onclick();
     }
@@ -49,14 +50,22 @@ public class addNewProduct extends AppCompatActivity {
                 stype = etype.getText().toString();
                 scolor = ecolor.getText().toString();
                 query = sname + "?" + stype + "?" + scolor;
-                sendpost(query);
+                if (sname.equals("")) {
+                    Toast.makeText(getApplicationContext(), "Name can not be empty!", Toast.LENGTH_SHORT).show();
+                }else{
+                    sendpost(query);
+                }
             }
         });
     }
 
+    /**
+     * this function contains callbacks for the networking done through rxjava and retrofit
+     * @param query it  is the query to be passed to the server
+     */
     private void sendpost(String query) {
         mAPIService.savePost(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<List<Post>>() {
+                .subscribe(new Subscriber<Post>() {
                     @Override
                     public void onCompleted() {
 
@@ -64,27 +73,38 @@ public class addNewProduct extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        onErrorReceived();
+                        onErrorReceived(e);
                     }
 
                     @Override
-                    public void onNext(List<Post> posts) {
+                    public void onNext(Post posts) {
                         onDataReceived(posts);
                     }
                 });
     }
 
-    void onErrorReceived() {
-        Log.w("completeeeeeee","eeee");
+    void onErrorReceived(Throwable e) {
+        Log.e(TAG, "error received " + e);
+        Toast.makeText(this, "Server error", Toast.LENGTH_SHORT).show();
     }
 
-    void onDataReceived(List<Post> posts) {
-//        ArrayList<ArrayList<String>> result = ProcessData.processTransactionData(posts);
-        ename.setText("");ecolor.setText("");etype.setText("");
-        Toast.makeText(this, "Product Added Successfully", Toast.LENGTH_SHORT).show();
-//        Log.w("completeeeeeee","nnnnnnnn");
-
+    void onDataReceived(Post posts) {
+        switch (posts.getResult()) {
+            case "true":
+                ename.setText("");
+                ecolor.setText("");
+                etype.setText("");
+                Toast.makeText(this, "Product Added Successfully", Toast.LENGTH_SHORT).show();
+                break;
+            case "duplicate":
+                Toast.makeText(this, "Product already exists", Toast.LENGTH_SHORT).show();
+                break;
+            case "false":
+                Toast.makeText(this, "Unable to add product. Try again!", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -104,6 +124,7 @@ public class addNewProduct extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
     }
+
     @Override
     protected void onResume() {
         super.onResume();

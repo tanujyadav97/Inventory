@@ -51,7 +51,7 @@ public class instructions {
 
                     @Override
                     public void onError(Throwable e) {
-                        onErrorReceived();
+                        onErrorReceived(e);
                     }
 
                     @Override
@@ -61,8 +61,8 @@ public class instructions {
                 });
     }
 
-    void onErrorReceived(){
-
+    void onErrorReceived(Throwable e){
+        Log.e("tag", "error received :" + e);
     }
 
     void onDataReceived(List<Post> posts){

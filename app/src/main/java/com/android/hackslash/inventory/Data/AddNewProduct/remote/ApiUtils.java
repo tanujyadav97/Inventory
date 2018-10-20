@@ -1,4 +1,4 @@
-package com.android.hackslash.inventory.AddNewProduct.remote;
+package com.android.hackslash.inventory.Data.AddNewProduct.remote;
 
 import com.android.hackslash.inventory.Data.RetrofitClient;
 
