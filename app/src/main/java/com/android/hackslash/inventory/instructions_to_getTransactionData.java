@@ -3,7 +3,7 @@ package com.android.hackslash.inventory;
 /**
  * This is a temperory class just to give some instruction on how to call server script
  */
-public class instructions {
+public class instructions_to_getTransactionData {
 
     /**
      * Add following imports to your class

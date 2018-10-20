@@ -52,7 +52,7 @@ public class addNewProduct extends AppCompatActivity {
                 query = sname + "?" + stype + "?" + scolor;
                 if (sname.equals("")) {
                     Toast.makeText(getApplicationContext(), "Name can not be empty!", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     sendpost(query);
                 }
             }
@@ -61,6 +61,7 @@ public class addNewProduct extends AppCompatActivity {
 
     /**
      * this function contains callbacks for the networking done through rxjava and retrofit
+     *
      * @param query it  is the query to be passed to the server
      */
     private void sendpost(String query) {
