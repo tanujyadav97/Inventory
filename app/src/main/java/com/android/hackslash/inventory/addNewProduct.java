@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.android.hackslash.inventory.Data.AddNewProduct.remote.APIService;
 import com.android.hackslash.inventory.Data.AddNewProduct.remote.ApiUtils;
-import com.android.hackslash.inventory.Data.AddNewProduct.model.Post;
+import com.android.hackslash.inventory.Data.AddNewProduct.model.Post_addproduct;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,13 +23,12 @@ public class addNewProduct extends AppCompatActivity {
     private String sname, stype, scolor;
     private APIService mAPIService;
     private String query;
-    private String TAG;
+    private String TAG = "addNewProduct";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_newproduct);
-        TAG = "addNewProduct";
         init();
         onclick();
     }
@@ -62,11 +61,12 @@ public class addNewProduct extends AppCompatActivity {
     /**
      * this function contains callbacks for the networking done through rxjava and retrofit
      *
-     * @param query it  is the query to be passed to the server
+     * @param query it  is the query to be passed to the server. It is like:
+     *              "name?color?type"
      */
     private void sendpost(String query) {
         mAPIService.savePost(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Post>() {
+                .subscribe(new Subscriber<Post_addproduct>() {
                     @Override
                     public void onCompleted() {
 
@@ -78,7 +78,7 @@ public class addNewProduct extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(Post posts) {
+                    public void onNext(Post_addproduct posts) {
                         onDataReceived(posts);
                     }
                 });
@@ -89,7 +89,7 @@ public class addNewProduct extends AppCompatActivity {
         Toast.makeText(this, "Server error", Toast.LENGTH_SHORT).show();
     }
 
-    void onDataReceived(Post posts) {
+    void onDataReceived(Post_addproduct posts) {
         switch (posts.getResult()) {
             case "true":
                 ename.setText("");

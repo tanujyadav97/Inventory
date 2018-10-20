@@ -1,6 +1,6 @@
 package com.android.hackslash.inventory.Data.getTransactions.remote;
 
-import com.android.hackslash.inventory.Data.getTransactions.model.Post;
+import com.android.hackslash.inventory.Data.getTransactions.model.Post_transactions;
 
 import java.util.List;
 import retrofit2.http.Field;
@@ -12,5 +12,5 @@ public interface APIService {
 
     @POST("get_transactions.php")
     @FormUrlEncoded
-    Observable<List<Post>> savePost(@Field("query") String query);
+    Observable<List<Post_transactions>> savePost(@Field("query") String query);
 }

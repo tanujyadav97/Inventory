@@ -1,17 +1,13 @@
-package com.android.hackslash.inventory.Data.getTransactions.model;
+package com.android.hackslash.inventory.Data.getInventoryDetails.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Post {
+public class Post_inventory {
 
-    @SerializedName("timestamp")
+    @SerializedName("result")
     @Expose
-    private String timestamp="";
-
-    @SerializedName("ttype")
-    @Expose
-    private String ttype="";
+    private String result="";
 
     @SerializedName("name")
     @Expose
@@ -25,16 +21,17 @@ public class Post {
     @Expose
     private String type="";
 
-    @SerializedName("quantity")
+    @SerializedName("shop1")
     @Expose
-    private String quantity="";
+    private String shop1="";
 
-    public String getTimestamp() {
-        return timestamp;
-    }
+    @SerializedName("shop2")
+    @Expose
+    private String shop2="";
 
-    public String getTtype() {
-        return ttype;
+
+    public String getResult() {
+        return result;
     }
 
     public String getName() {
@@ -49,8 +46,12 @@ public class Post {
         return type;
     }
 
-    public String getQuantity() {
-        return quantity;
+    public String getShop1() {
+        return shop1;
+    }
+
+    public String getShop2() {
+        return shop2;
     }
 
 }

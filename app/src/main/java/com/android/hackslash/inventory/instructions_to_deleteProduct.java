@@ -10,7 +10,7 @@ public class instructions_to_deleteProduct {
      * import android.util.Log;
      * import android.widget.Toast;
      *
-     * import com.android.hackslash.inventory.Data.deleteProduct.model.Post;
+     * import com.android.hackslash.inventory.Data.deleteProduct.model.Post_deleteproduct;
      * import com.android.hackslash.inventory.Data.deleteProduct.remote.APIService;
      * import com.android.hackslash.inventory.Data.deleteProduct.remote.ApiUtils;
      *
@@ -36,13 +36,14 @@ public class instructions_to_deleteProduct {
 
     /**
      * this function contains callbacks for the networking done through rxjava and retrofit
-     * @param query it  is the query to be passed to the server
+     * @param query it  is the query to be passed to the server. It is like:
+     *              "name?color?type"
      */
 
     /*
     private void sendpost(String query) {
         mAPIService.savePost(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Post>() {
+                .subscribe(new Subscriber<Post_deleteproduct>() {
                     @Override
                     public void onCompleted() {
 
@@ -54,18 +55,18 @@ public class instructions_to_deleteProduct {
                     }
 
                     @Override
-                    public void onNext(Post posts) {
+                    public void onNext(Post_deleteproduct posts) {
                         onDataReceived(posts);
                     }
                 });
     }
 
     void onErrorReceived(Throwable e) {
-        Log.e(TAG, "error received " + e);
+        Log.e(TAG, "error received :" + e);
         Toast.makeText(this, "Server error", Toast.LENGTH_SHORT).show();
     }
 
-    void onDataReceived(Post posts) {
+    void onDataReceived(Post_deleteproduct posts) {
         switch (posts.getResult()) {
             case "true":
                 Log.w(TAG, "Product Deleted Successfully");

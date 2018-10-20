@@ -1,6 +1,6 @@
 package com.android.hackslash.inventory.Data.AddNewProduct.remote;
 
-import com.android.hackslash.inventory.Data.AddNewProduct.model.Post;
+import com.android.hackslash.inventory.Data.AddNewProduct.model.Post_addproduct;
 
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -11,5 +11,5 @@ public interface APIService {
 
     @POST("add_product.php")
     @FormUrlEncoded
-    Observable<Post> savePost(@Field("query") String query);
+    Observable<Post_addproduct> savePost(@Field("query") String query);
 }
