@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.hackslash.inventory.R;
-import com.android.hackslash.inventory.addNewProduct;
+import com.android.hackslash.inventory.TransactionsActivity;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ public class item_adapter extends RecyclerView.Adapter<item_adapter.itemRowHolde
     }
 
     @Override
-    public void onBindViewHolder(item_adapter.itemRowHolder holder, int position) {
+    public void onBindViewHolder(item_adapter.itemRowHolder holder, final int position) {
         holder.name.setText(data.get(position).get(0));
         holder.color.setText(data.get(position).get(1));
         holder.size.setText(data.get(position).get(2));
@@ -40,8 +40,12 @@ public class item_adapter extends RecyclerView.Adapter<item_adapter.itemRowHolde
         holder.ll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mContext, addNewProduct.class);
-                // add data here
+                Intent intent = new Intent(mContext, TransactionsActivity.class);
+                intent.putExtra("name", data.get(position).get(0));
+                intent.putExtra("color", data.get(position).get(1));
+                intent.putExtra("size", data.get(position).get(2));
+                intent.putExtra("q1", data.get(position).get(3));
+                intent.putExtra("q2", data.get(position).get(4));
                 mContext.startActivity(intent);
             }
         });

@@ -1,5 +1,7 @@
 package com.android.hackslash.inventory;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -34,10 +36,10 @@ public class addNewProduct extends AppCompatActivity {
     }
 
     private void init() {
-        ename = (EditText) findViewById(R.id.nameEditText);
-        etype = (EditText) findViewById(R.id.typeEditText);
-        ecolor = (EditText) findViewById(R.id.colorEditText);
-        button = (Button) findViewById(R.id.submit_button);
+        ename = findViewById(R.id.nameEditText);
+        etype = findViewById(R.id.typeEditText);
+        ecolor = findViewById(R.id.colorEditText);
+        button = findViewById(R.id.submit_button);
         mAPIService = ApiUtils.getAPIService();
     }
 
@@ -96,6 +98,9 @@ public class addNewProduct extends AppCompatActivity {
                 ecolor.setText("");
                 etype.setText("");
                 Toast.makeText(this, "Product Added Successfully", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent();
+                setResult(Activity.RESULT_OK, intent);
+                finish();
                 break;
             case "duplicate":
                 Toast.makeText(this, "Product already exists", Toast.LENGTH_SHORT).show();
@@ -136,4 +141,11 @@ public class addNewProduct extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent();
+        setResult(Activity.RESULT_CANCELED, intent);
+        finish();
+    }
 }

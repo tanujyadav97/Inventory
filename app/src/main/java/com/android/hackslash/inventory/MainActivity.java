@@ -1,11 +1,15 @@
 package com.android.hackslash.inventory;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.hackslash.inventory.Adapter.item_adapter;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     ProgressDialog progressDialog;
     private LinearLayoutManager mLinearLayoutManager;
+    FloatingActionButton add;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +45,28 @@ public class MainActivity extends AppCompatActivity {
         progressDialog = ProgressDialog.show(this, "Loading Data",
                 "Please wait...", false, false);
 
+        add = findViewById(R.id.add_item);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), addNewProduct.class);
+                startActivityForResult(intent, 1);
+            }
+        });
+
         mrecycler = findViewById(R.id.items_recycler_view);
         mLinearLayoutManager = new LinearLayoutManager(this);
         mrecycler.setLayoutManager(mLinearLayoutManager);
         sendpost("3");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            progressDialog = ProgressDialog.show(this, "Loading Data",
+                    "Please wait...", false, false);
+            sendpost("3");
+        }
     }
 
     /**
@@ -89,10 +112,10 @@ public class MainActivity extends AppCompatActivity {
             Log.w(TAG, "Data retrieved Successfully");
             Toast.makeText(this, "Data retrieved Successfully", Toast.LENGTH_SHORT).show();
 
-            ArrayList<ArrayList<String>> transactions = ProcessData.processInventoryData(posts, query);
-            Log.w(TAG, transactions.get(0).toString());
+            ArrayList<ArrayList<String>> inventories = ProcessData.processInventoryData(posts, query);
+            Log.w(TAG, inventories.size() + "");
 
-            updateUi(transactions);
+            updateUi(inventories);
         }
     }
 
