@@ -3,4 +3,12 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <array name="trans_type">
+        <item>To Godown</item>
+        <item>Godown to Shop</item>
+        <item>Shop to Customer</item>
+        <item>Shop to Godown</item>
+        <item>Customer to Shop</item>
+    </array>
 </resources>

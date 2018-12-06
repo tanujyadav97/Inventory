@@ -1,12 +1,21 @@
 package com.android.hackslash.inventory;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +25,7 @@ import com.android.hackslash.inventory.Data.getTransactions.model.Post_transacti
 import com.android.hackslash.inventory.Data.getTransactions.remote.APIService;
 import com.android.hackslash.inventory.Data.getTransactions.remote.ApiUtils;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,21 +37,25 @@ public class TransactionsActivity extends AppCompatActivity {
 
     String name, color, size, q1, q2;
     TextView tvname, tvcolor, tvsize, tvq1, tvq2;
+    Spinner transtype;
+    NumberPicker np;
+    Button done, cancel;
+    LinearLayout lltrans;
+    FloatingActionButton dotrans;
     private String TAG = "getTransactions";
     private APIService mAPIService;
     RecyclerView mrecycler;
     private RecyclerView.Adapter adapter;
     ProgressDialog progressDialog;
     private LinearLayoutManager mLinearLayoutManager;
+    String query;
+    int selectedQuantity, quan1, quan2, trans_type;
+    Boolean successful_trans = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transactions);
-
-
-        progressDialog = ProgressDialog.show(this, "Loading Data",
-                "Please wait...", false, false);
 
         Intent intent = getIntent();
         name = intent.getStringExtra("name");
@@ -55,6 +69,12 @@ public class TransactionsActivity extends AppCompatActivity {
         tvsize = findViewById(R.id.prod_size_trans);
         tvq1 = findViewById(R.id.quantity1_trans);
         tvq2 = findViewById(R.id.quantity2_trans);
+        transtype = findViewById(R.id.trans_type_select);
+        cancel = findViewById(R.id.cancel);
+        done = findViewById(R.id.done);
+        dotrans = findViewById(R.id.transaction);
+        lltrans = findViewById(R.id.transview);
+        np = findViewById(R.id.trans_quantity);
 
         tvname.setText(name);
         tvcolor.setText(color);
@@ -62,12 +82,9 @@ public class TransactionsActivity extends AppCompatActivity {
         tvq1.setText(q1);
         tvq2.setText(q2);
 
-        mAPIService = ApiUtils.getAPIService();
+        np.setMaxValue(1000);
 
-        mrecycler = findViewById(R.id.trans_recycler_view);
-        mLinearLayoutManager = new LinearLayoutManager(this);
-        mrecycler.setLayoutManager(mLinearLayoutManager);
-        String query = "";
+        query = "";
         if (!color.equals("") && !size.equals(""))
             query = "4?" + name + "?" + color + "?" + size;
         else if (!color.equals(""))
@@ -76,7 +93,81 @@ public class TransactionsActivity extends AppCompatActivity {
             query = "5?" + name + "?" + size;
         else
             query = "2?" + name;
+
+        dotrans.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (lltrans.getVisibility() == View.GONE) {
+                    lltrans.setVisibility(View.VISIBLE);
+                    dotrans.setVisibility(View.GONE);
+                    mrecycler.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                lltrans.setVisibility(View.GONE);
+                dotrans.setVisibility(View.VISIBLE);
+                mrecycler.setVisibility(View.VISIBLE);
+            }
+        });
+
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectedQuantity = np.getValue();
+                quan1 = Integer.parseInt(q1);
+                quan2 = Integer.parseInt(q2);
+                trans_type = transtype.getSelectedItemPosition();
+
+                if (selectedQuantity == 0) {
+                    Toast.makeText(getApplicationContext(), "Please select non zero value", Toast.LENGTH_SHORT).show();
+                } else if (trans_type == 1 && selectedQuantity > quan1) {
+                    Toast.makeText(getApplicationContext(), "Insufficient Quantity in Godown", Toast.LENGTH_SHORT).show();
+                } else if (trans_type == 2 && selectedQuantity > quan2) {
+                    Toast.makeText(getApplicationContext(), "Insufficient Quantity in Shop", Toast.LENGTH_SHORT).show();
+                } else if (trans_type == 3 && selectedQuantity > quan2) {
+                    Toast.makeText(getApplicationContext(), "Insufficient Quantity in Shop", Toast.LENGTH_SHORT).show();
+                } else {
+                    int typetrans = trans_type + 1;
+                    String timstamp = ((new Timestamp(System.currentTimeMillis())).getTime() / 1000) + "";
+
+                    final String query1 = typetrans + "?" + name + "?" + color + "?" + size + "?" + selectedQuantity + "?" + timstamp;
+
+                    new AlertDialog.Builder(TransactionsActivity.this)
+                            .setTitle("Confirmation")
+                            .setMessage("Are you sure?")
+                            .setIcon(R.drawable.ic_error_outline_black_24dp)
+                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    DoTransaction doTransaction = new DoTransaction(TransactionsActivity.this);
+                                    doTransaction.sendpost(query1);
+                                }
+                            })
+                            .setNegativeButton("NO", null).show();
+                }
+            }
+        });
+
+        mAPIService = ApiUtils.getAPIService();
+
+        mrecycler = findViewById(R.id.trans_recycler_view);
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mrecycler.setLayoutManager(mLinearLayoutManager);
+
         sendPost(query);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent();
+        if (successful_trans)
+            setResult(Activity.RESULT_OK, intent);
+        else
+            setResult(Activity.RESULT_CANCELED, intent);
+        finish();
     }
 
     /**
@@ -91,7 +182,10 @@ public class TransactionsActivity extends AppCompatActivity {
      *              "5?name?type" : to get transactions of a name and type
      */
 
-    public void sendPost(String query) {
+    private void sendPost(String query) {
+        progressDialog = ProgressDialog.show(this, "Loading Data",
+                "Please wait...", false, false);
+
         mAPIService.savePost(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Post_transactions>>() {
                     @Override
@@ -129,5 +223,35 @@ public class TransactionsActivity extends AppCompatActivity {
         adapter = new trans_adapter(getApplicationContext(), data);
         mrecycler.setAdapter(adapter);
         progressDialog.dismiss();
+    }
+
+    public void refresh() {
+        successful_trans = true;
+        lltrans.setVisibility(View.GONE);
+        dotrans.setVisibility(View.VISIBLE);
+        mrecycler.setVisibility(View.VISIBLE);
+
+        if (trans_type == 0) {
+            q1 = (quan1 + selectedQuantity) + "";
+            tvq1.setText(q1);
+        } else if (trans_type == 1) {
+            q1 = (quan1 - selectedQuantity) + "";
+            q2 = (quan2 + selectedQuantity) + "";
+            tvq1.setText(q1);
+            tvq2.setText(q2);
+        } else if (trans_type == 2) {
+            q2 = (quan2 - selectedQuantity) + "";
+            tvq2.setText(q2);
+        } else if (trans_type == 3) {
+            q1 = (quan1 + selectedQuantity) + "";
+            q2 = (quan2 - selectedQuantity) + "";
+            tvq1.setText(q1);
+            tvq2.setText(q2);
+        } else if (trans_type == 4) {
+            q2 = (quan2 + selectedQuantity) + "";
+            tvq2.setText(q2);
+        }
+
+        sendPost(query);
     }
 }

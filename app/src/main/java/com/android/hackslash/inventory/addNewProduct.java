@@ -1,6 +1,8 @@
 package com.android.hackslash.inventory;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,7 +23,7 @@ import rx.schedulers.Schedulers;
 
 public class addNewProduct extends AppCompatActivity {
     private EditText ename, etype, ecolor;
-    private Button button;
+    private Button button, cancelButton;
     private String sname, stype, scolor;
     private APIService mAPIService;
     private String query;
@@ -40,6 +42,7 @@ public class addNewProduct extends AppCompatActivity {
         etype = findViewById(R.id.typeEditText);
         ecolor = findViewById(R.id.colorEditText);
         button = findViewById(R.id.submit_button);
+        cancelButton = findViewById(R.id.cancel_button);
         mAPIService = ApiUtils.getAPIService();
     }
 
@@ -54,8 +57,24 @@ public class addNewProduct extends AppCompatActivity {
                 if (sname.equals("")) {
                     Toast.makeText(getApplicationContext(), "Name can not be empty!", Toast.LENGTH_SHORT).show();
                 } else {
-                    sendpost(query);
+                    new AlertDialog.Builder(addNewProduct.this)
+                            .setTitle("Confirmation")
+                            .setMessage("Are you sure?")
+                            .setIcon(R.drawable.ic_error_outline_black_24dp)
+                            .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    sendpost(query);
+                                }
+                            })
+                            .setNegativeButton("NO", null).show();
                 }
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
             }
         });
     }
@@ -144,8 +163,5 @@ public class addNewProduct extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent();
-        setResult(Activity.RESULT_CANCELED, intent);
-        finish();
     }
 }

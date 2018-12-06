@@ -42,7 +42,7 @@ public class trans_adapter extends RecyclerView.Adapter<trans_adapter.transRowHo
     public void onBindViewHolder(trans_adapter.transRowHolder holder, final int position) {
         Calendar cal = Calendar.getInstance(Locale.ENGLISH);
         cal.setTimeInMillis(Long.parseLong(data.get(position).get(0)) * 1000);
-        String date = DateFormat.format("hh:mm dd-MM-yyyy", cal).toString();
+        String date = DateFormat.format("HH:mm dd-MM-yyyy", cal).toString();
         holder.datetime.setText(date);
         holder.transtype.setText(ttype.get(Integer.parseInt(data.get(position).get(1)) - 1));
         holder.transquan.setText(data.get(position).get(5));

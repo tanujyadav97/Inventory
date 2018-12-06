@@ -42,9 +42,6 @@ public class MainActivity extends AppCompatActivity {
 
         mAPIService = ApiUtils.getAPIService();
 
-        progressDialog = ProgressDialog.show(this, "Loading Data",
-                "Please wait...", false, false);
-
         add = findViewById(R.id.add_item);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            progressDialog = ProgressDialog.show(this, "Loading Data",
-                    "Please wait...", false, false);
             sendpost("3");
         }
     }
@@ -78,7 +73,10 @@ public class MainActivity extends AppCompatActivity {
      *              "3" to get both shops data
      */
 
-    private void sendpost(final String query) {
+    void sendpost(final String query) {
+        progressDialog = ProgressDialog.show(this, "Loading Data",
+                "Please wait...", false, false);
+
         mAPIService.savePost(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<Post_inventory>>() {
                     @Override
@@ -108,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         if (posts.get(0).getResult().equals("false")) {
             Log.w(TAG, "Unable to retrieve data. Try again!");
             Toast.makeText(this, "Unable to retrieve data. Try again!", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
         } else {
             Log.w(TAG, "Data retrieved Successfully");
             Toast.makeText(this, "Data retrieved Successfully", Toast.LENGTH_SHORT).show();
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUi(ArrayList<ArrayList<String>> data) {
-        adapter = new item_adapter(getApplicationContext(), data);
+        adapter = new item_adapter(getApplicationContext(), this, data);
         mrecycler.setAdapter(adapter);
         progressDialog.dismiss();
     }
