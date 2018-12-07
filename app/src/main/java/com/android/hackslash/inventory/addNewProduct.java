@@ -53,7 +53,7 @@ public class addNewProduct extends AppCompatActivity {
                 sname = ename.getText().toString();
                 stype = etype.getText().toString();
                 scolor = ecolor.getText().toString();
-                query = sname + "?" + stype + "?" + scolor;
+                query = sname + "?" + scolor + "?" + stype;
                 if (sname.equals("")) {
                     Toast.makeText(getApplicationContext(), "Name can not be empty!", Toast.LENGTH_SHORT).show();
                 } else {
