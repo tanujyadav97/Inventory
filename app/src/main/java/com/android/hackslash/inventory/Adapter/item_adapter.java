@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -19,13 +22,14 @@ import com.android.hackslash.inventory.TransactionsActivity;
 
 import java.util.ArrayList;
 
-public class item_adapter extends RecyclerView.Adapter<item_adapter.itemRowHolder> {
+public class item_adapter extends RecyclerView.Adapter<item_adapter.itemRowHolder> implements Filterable {
     private Context mContext, mContext2;
 
-    private ArrayList<ArrayList<String>> data;
+    private ArrayList<ArrayList<String>> data, mFilteredList;
 
     public item_adapter(Context context, Context context2, ArrayList<ArrayList<String>> Data) {
         this.data = Data;
+        this.mFilteredList = Data;
         this.mContext = context;
         this.mContext2 = context2;
     }
@@ -95,6 +99,45 @@ public class item_adapter extends RecyclerView.Adapter<item_adapter.itemRowHolde
             ll = itemView.findViewById(R.id.ll);
             delete = itemView.findViewById(R.id.delete);
         }
+    }
+
+
+    @Override
+    public Filter getFilter() {
+
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+
+                String charString = charSequence.toString();
+
+                if (charString.isEmpty()) {
+                    data = mFilteredList;
+                } else {
+
+                    ArrayList<ArrayList<String>> filteredList = new ArrayList<>();
+
+                    for (ArrayList<String> obj : mFilteredList) {
+                        String name = obj.get(0);
+
+                        if (name.toLowerCase().startsWith(charString.toLowerCase())) {
+                            filteredList.add(obj);
+                        }
+                    }
+                    data = filteredList;
+                }
+
+                FilterResults filterResults = new FilterResults();
+                filterResults.values = data;
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                data = (ArrayList<ArrayList<String>>) filterResults.values;
+                notifyDataSetChanged();
+            }
+        };
     }
 }
 

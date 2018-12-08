@@ -265,6 +265,7 @@ public class TransactionsActivity extends AppCompatActivity {
 
         MenuItem item = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setQueryHint("Search by date...");
         search(searchView);
 
         return true;

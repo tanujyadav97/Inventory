@@ -1,10 +1,8 @@
 package com.android.hackslash.inventory.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,8 +97,6 @@ public class trans_adapter extends RecyclerView.Adapter<trans_adapter.transRowHo
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 data = (ArrayList<ArrayList<String>>) filterResults.values;
-
-                Log.w("asda", "reach" + data.size());
                 notifyDataSetChanged();
             }
         };
