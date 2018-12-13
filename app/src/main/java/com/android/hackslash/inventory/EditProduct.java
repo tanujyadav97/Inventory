@@ -4,46 +4,56 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.android.hackslash.inventory.Data.AddNewProduct.remote.APIService;
-import com.android.hackslash.inventory.Data.AddNewProduct.remote.ApiUtils;
-import com.android.hackslash.inventory.Data.AddNewProduct.model.Post_addproduct;
+import com.android.hackslash.inventory.Data.EditProduct.model.model.Post_editproduct;
+import com.android.hackslash.inventory.Data.EditProduct.model.remote.APIService;
+import com.android.hackslash.inventory.Data.EditProduct.model.remote.ApiUtils;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class addNewProduct extends AppCompatActivity {
+public class EditProduct extends AppCompatActivity {
     private EditText ename, etype, ecolor;
     private Button button, cancelButton;
     private String sname, stype, scolor;
     private APIService mAPIService;
     private String query;
-    private String TAG = "addNewProduct";
+    private String TAG = "EditProduct";
+    private String oldname, oldcolor, oldtype;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_newproduct);
+        setContentView(R.layout.activity_edit_product);
+
+        Intent intent = getIntent();
+        oldname = intent.getStringExtra("name");
+        oldcolor = intent.getStringExtra("color");
+        oldtype = intent.getStringExtra("type");
+
         init();
         onclick();
     }
 
     private void init() {
-        ename = findViewById(R.id.nameEditText);
-        etype = findViewById(R.id.typeEditText);
-        ecolor = findViewById(R.id.colorEditText);
-        button = findViewById(R.id.submit_button);
-        cancelButton = findViewById(R.id.cancel_button);
+        ename = findViewById(R.id.editnameEditText);
+        etype = findViewById(R.id.edittypeEditText);
+        ecolor = findViewById(R.id.editcolorEditText);
+        button = findViewById(R.id.editsubmit_button);
+        cancelButton = findViewById(R.id.editcancel_button);
+
+        ename.setText(oldname);
+        ecolor.setText(oldcolor);
+        etype.setText(oldtype);
+
         mAPIService = ApiUtils.getAPIService();
     }
 
@@ -54,11 +64,11 @@ public class addNewProduct extends AppCompatActivity {
                 sname = ename.getText().toString();
                 stype = etype.getText().toString();
                 scolor = ecolor.getText().toString();
-                query = sname + "?" + scolor + "?" + stype;
+                query = oldname + "?" + oldcolor + "?" + oldtype + "?" + sname + "?" + scolor + "?" + stype;
                 if (sname.equals("")) {
                     Toast.makeText(getApplicationContext(), "Name can not be empty!", Toast.LENGTH_SHORT).show();
                 } else {
-                    new AlertDialog.Builder(addNewProduct.this)
+                    new AlertDialog.Builder(EditProduct.this)
                             .setTitle("Confirmation")
                             .setMessage("Are you sure?")
                             .setIcon(R.drawable.ic_error_outline_black_24dp)
@@ -88,7 +98,7 @@ public class addNewProduct extends AppCompatActivity {
      */
     private void sendpost(String query) {
         mAPIService.savePost(query).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Post_addproduct>() {
+                .subscribe(new Subscriber<Post_editproduct>() {
                     @Override
                     public void onCompleted() {
 
@@ -100,7 +110,7 @@ public class addNewProduct extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(Post_addproduct posts) {
+                    public void onNext(Post_editproduct posts) {
                         onDataReceived(posts);
                     }
                 });
@@ -111,13 +121,13 @@ public class addNewProduct extends AppCompatActivity {
         Toast.makeText(this, "Server error", Toast.LENGTH_SHORT).show();
     }
 
-    void onDataReceived(Post_addproduct posts) {
+    void onDataReceived(Post_editproduct posts) {
         switch (posts.getResult()) {
             case "true":
                 ename.setText("");
                 ecolor.setText("");
                 etype.setText("");
-                Toast.makeText(this, "Product Added Successfully", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Product Updated Successfully", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent();
                 setResult(Activity.RESULT_OK, intent);
                 finish();
@@ -126,7 +136,7 @@ public class addNewProduct extends AppCompatActivity {
                 Toast.makeText(this, "Product already exists", Toast.LENGTH_SHORT).show();
                 break;
             case "false":
-                Toast.makeText(this, "Unable to add product. Try again!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Unable to update product. Try again!", Toast.LENGTH_SHORT).show();
                 break;
         }
     }

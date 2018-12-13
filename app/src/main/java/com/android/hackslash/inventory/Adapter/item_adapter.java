@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.hackslash.inventory.DeleteProduct;
+import com.android.hackslash.inventory.EditProduct;
 import com.android.hackslash.inventory.MainActivity;
 import com.android.hackslash.inventory.R;
 import com.android.hackslash.inventory.TransactionsActivity;
@@ -77,6 +78,26 @@ public class item_adapter extends RecyclerView.Adapter<item_adapter.itemRowHolde
                         .setNegativeButton("NO", null).show();
             }
         });
+
+        holder.edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(mContext2)
+                        .setTitle("Confirmation")
+                        .setMessage("Are you sure you want to update this product?")
+                        .setIcon(R.drawable.ic_error_outline_black_24dp)
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Intent intent = new Intent(mContext2, EditProduct.class);
+                                intent.putExtra("name", data.get(position).get(0));
+                                intent.putExtra("color", data.get(position).get(1));
+                                intent.putExtra("type", data.get(position).get(2));
+                                ((MainActivity) mContext2).startActivityForResult(intent, 1);
+                            }
+                        })
+                        .setNegativeButton("NO", null).show();
+            }
+        });
     }
 
     @Override
@@ -87,7 +108,7 @@ public class item_adapter extends RecyclerView.Adapter<item_adapter.itemRowHolde
     public class itemRowHolder extends RecyclerView.ViewHolder {
         TextView name, color, size, q1, q2;
         LinearLayout ll;
-        ImageView delete;
+        ImageView delete, edit;
 
         public itemRowHolder(View itemView) {
             super(itemView);
@@ -98,6 +119,7 @@ public class item_adapter extends RecyclerView.Adapter<item_adapter.itemRowHolde
             q2 = itemView.findViewById(R.id.quantity2);
             ll = itemView.findViewById(R.id.ll);
             delete = itemView.findViewById(R.id.delete);
+            edit = itemView.findViewById(R.id.edit);
         }
     }
 
